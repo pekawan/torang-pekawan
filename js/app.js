@@ -22,6 +22,7 @@ function cardJadwal(x) {
 async function loadJadwal() {
   const target = $('#jadwal-list');
   if (!target) return;
+
   const { data, error } = await sb.from('jadwal').select('*').order('tanggal').order('jam');
   if (error) {
     target.innerHTML = '<p>Jadwal belum dapat dimuat. Periksa konfigurasi Supabase.</p>';
@@ -31,11 +32,42 @@ async function loadJadwal() {
     ? data.map(cardJadwal).join('')
     : '<p>Belum ada jadwal ibadah.</p>';
 
-  const bulan = $('#jadwal-bulan');
-  if (bulan) {
-    bulan.textContent = data.length
-      ? new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(new Date(data[0].tanggal + 'T00:00:00'))
-      : 'Jadwal Ibadah';
+  // Bulan + foto khadim
+  const bulanEl = $('#jadwal-bulan');
+  const khadimEl = $('#jadwal-khadim');
+
+  if (bulanEl) {
+    const { data: bulanData } = await sb.from('bulan')
+      .select('*').eq('aktif', true)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (bulanData && bulanData.length) {
+      const b = bulanData[0];
+      bulanEl.textContent = b.nama;
+
+      if (khadimEl) {
+        const url = b.foto_path
+          ? sb.storage.from('dokumentasi').getPublicUrl(b.foto_path).data.publicUrl
+          : '';
+        if (url) {
+          khadimEl.innerHTML = `
+            <figure class="khadim-figure">
+              <img src="${esc(url)}" alt="${esc(b.foto_judul || 'Khadim')}">
+              ${b.foto_judul ? `<figcaption>${esc(b.foto_judul)}</figcaption>` : ''}
+            </figure>`;
+          khadimEl.hidden = false;
+        } else {
+          khadimEl.innerHTML = '';
+          khadimEl.hidden = true;
+        }
+      }
+    } else {
+      bulanEl.textContent = data.length
+        ? new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(new Date(data[0].tanggal + 'T00:00:00'))
+        : 'Jadwal Ibadah';
+      if (khadimEl) { khadimEl.innerHTML = ''; khadimEl.hidden = true; }
+    }
   }
 }
 

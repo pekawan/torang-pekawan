@@ -26,6 +26,7 @@
     <h1 class="h3">Kelola Jadwal Ibadah</h1>
     <div id="msg" class="alert alert-danger" hidden></div>
 
+    <!-- ===== CARD 1: TAMBAH JADWAL ===== -->
     <div class="card card-body mb-4">
       <h2 class="h5">Tambah jadwal ibadah</h2>
       <form id="jadwal-form" class="row g-2">
@@ -49,12 +50,71 @@
           <label class="form-label">Khadim</label>
           <input id="khadim" class="form-control">
         </div>
-        <div>
+        <div class="col-12">
           <button class="btn btn-primary">Simpan jadwal</button>
         </div>
       </form>
     </div>
 
+    <!-- ===== CARD 2: BULAN + FOTO KHADIM ===== -->
+    <div class="card card-body mb-4">
+      <h2 class="h5">Bulan Jadwal</h2>
+      <p class="text-muted small mb-3">
+        Judul bulan dan foto khadim yang tampil di kartu jadwal publik.
+      </p>
+
+      <!-- Form bulan -->
+      <form id="bulan-form" class="row g-2 mb-3">
+        <div class="col-md-8">
+          <label class="form-label">Nama bulan</label>
+          <input id="bulan-nama" class="form-control" placeholder="Mis. Oktober 2026" required>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <button class="btn btn-primary w-100" id="bulan-submit">Tambah bulan</button>
+        </div>
+        <input type="hidden" id="bulan-id">
+      </form>
+
+      <!-- Form foto khadim -->
+      <div class="border rounded p-3 mb-3 bg-white">
+        <h3 class="h6 mb-2">Foto Khadim</h3>
+        <p class="text-muted small mb-3">
+          Foto &amp; judul khadim tampil di bawah teks bulan pada kartu jadwal.
+        </p>
+        <form id="khadim-form" class="row g-2">
+          <div class="col-md-6">
+            <label class="form-label">Judul di bawah foto</label>
+            <input id="khadim-judul" class="form-control" placeholder="Mis. Pnt. Glen Mashuri S.Th">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Foto khadim (maks. 5 MB)</label>
+            <input id="khadim-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-control">
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary">Simpan foto khadim</button>
+            <button type="button" class="btn btn-outline-danger" id="hapus-khadim">Hapus foto khadim</button>
+          </div>
+        </form>
+        <div id="khadim-preview" class="mt-3"></div>
+      </div>
+
+      <!-- Tabel daftar bulan -->
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Nama Bulan</th>
+              <th>Foto</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-bulan"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== CARD 3: DAFTAR JADWAL ===== -->
     <div class="card card-body mb-4">
       <h2 class="h5">Daftar jadwal</h2>
       <div class="table-responsive">
