@@ -1,1 +1,75 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard Admin | Torang Pekawan</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"></head><body class="bg-light"><nav class="navbar navbar-dark" style="background:#43307c"><div class="container"><a class="navbar-brand" href="index.html">Admin Pekawan</a><div class="text-white">Login: <span id="admin-email"></span> <button class="btn btn-sm btn-light ms-2" id="logout">Keluar</button></div></div></nav><main class="container py-4"><h1 class="h3">Kelola Website</h1><p>Jadwal ibadah dan dokumentasi tersimpan di Supabase.</p><div id="msg" class="alert alert-danger" hidden></div><div class="card card-body mb-4"><h2 class="h5">Tambah jadwal ibadah</h2><form id="jadwal-form" class="row g-2"><div class="col-md-6"><label class="form-label">Nama kegiatan</label><input id="nama" class="form-control" required></div><div class="col-md-6"><label class="form-label">Tanggal</label><input id="tanggal" type="date" class="form-control" required></div><div class="col-md-4"><label class="form-label">Tempat</label><input id="tempat" class="form-control" required></div><div class="col-md-4"><label class="form-label">Jam</label><input id="jam" class="form-control" placeholder="18.00 WITA" required></div><div class="col-md-4"><label class="form-label">Khadim</label><input id="khadim" class="form-control"></div><div><button class="btn btn-primary">Simpan jadwal</button></div></form></div><div class="card card-body mb-4"><h2 class="h5">Daftar jadwal</h2><div class="table-responsive"><table class="table"><thead><tr><th>Nama</th><th>Tanggal</th><th>Jam</th><th>Tempat</th><th>Aksi</th></tr></thead><tbody id="admin-jadwal"></tbody></table></div></div><div class="card card-body mb-4"><h2 class="h5">Unggah dokumentasi</h2><form id="upload-form"><label class="form-label">Judul foto</label><input id="judul-foto" class="form-control mb-2"><label class="form-label">Foto (JPG, PNG, WEBP, maks. 5 MB)</label><input id="foto" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-3" required><button class="btn btn-primary">Unggah foto</button></form></div><div class="card card-body"><h2 class="h5">Daftar dokumentasi</h2><div class="table-responsive"><table class="table"><thead><tr><th>Judul</th><th>Path file</th><th>Aksi</th></tr></thead><tbody id="admin-foto"></tbody></table></div></div><a class="d-inline-block mt-4" href="../index.html">Lihat situs publik</a></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/supabase-config.js"></script><script src="../js/admin.js"></script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard Admin | Torang Pekawan</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <nav class="navbar navbar-dark" style="background:#43307c">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Admin Pekawan</a>
+      <div class="text-white d-flex align-items-center gap-2">
+        <a class="btn btn-sm btn-light" href="index.html">Jadwal</a>
+        <a class="btn btn-sm btn-outline-light" href="dokumentasi.html">Dokumentasi</a>
+        <button class="btn btn-sm btn-light" id="logout">Keluar</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <h1 class="h3">Kelola Jadwal Ibadah</h1>
+    <div id="msg" class="alert alert-danger" hidden></div>
+
+    <div class="card card-body mb-4">
+      <h2 class="h5">Tambah jadwal ibadah</h2>
+      <form id="jadwal-form" class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">Nama Ibadah</label>
+          <input id="nama" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Tanggal</label>
+          <input id="tanggal" type="date" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Tempat</label>
+          <input id="tempat" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Jam</label>
+          <input id="jam" class="form-control" placeholder="18.00 WITA" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Khadim</label>
+          <input id="khadim" class="form-control">
+        </div>
+        <div>
+          <button class="btn btn-primary">Simpan jadwal</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card card-body mb-4">
+      <h2 class="h5">Daftar jadwal</h2>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr><th>Nama</th><th>Tanggal</th><th>Jam</th><th>Tempat</th><th>Aksi</th></tr>
+          </thead>
+          <tbody id="admin-jadwal"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

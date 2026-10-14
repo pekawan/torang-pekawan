@@ -1,12 +1,129 @@
 <!doctype html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Tentang Torang Pekawan"><title>Tentang | Torang Pekawan</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link rel="stylesheet" href="assets/css/style.css"></head><body>
-<nav class="navbar navbar-expand-lg navbar-glass fixed-top"><div class="container-fluid px-lg-5"><a class="navbar-brand" href="index.html">Torang Pekawan</a><button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Buka menu"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="nav"><ul class="navbar-nav ms-auto gap-lg-4">
-<li class="nav-item"><a class="nav-link" href="index.html">Beranda</a></li><li class="nav-item"><a class="nav-link" href="index.html#jadwal">Jadwal Ibadah</a></li><li class="nav-item"><a class="nav-link" href="kegiatan.html">Kegiatan</a></li><li class="nav-item"><a class="nav-link" href="tentang.html">Tentang Pekawan</a></li><li class="nav-item"><a class="nav-link" href="lainnya.html">Lainnya</a></li></ul></div></div></nav><main>
-<section class="hero hero--tentang"><div class="container-xl hero-grid"><div class="hero-text"><h1>Tentang Torang Pekawan</h1><p>Torang Pekawan adalah ruang untuk bertumbuh bersama. Di sini kamu bisa mengikuti jadwal ibadah, kegiatan, dan acara terbaru.</p></div><div class="hero-side"><figure class="hero-photo"><img src="assets/foto/pekawan.jpg" alt="Logo Torang Pekawan" onerror="this.style.display='none'"></figure></div></div></section>
-<section class="pilar"><div class="container-xl"><h2 class="section-title">Yang kami jalani</h2><div class="pilar-grid"><article class="pilar-item"><h3>Bertumbuh dalam iman</h3><p>Ruang untuk belajar, berdoa, dan bertumbuh bersama lewat ibadah dan persekutuan.</p></article><article class="pilar-item"><h3>Berkarya bagi sesama</h3><p>Setiap orang punya talenta. Di sini talenta itu dipakai untuk menolong dan menguatkan orang lain.</p></article><article class="pilar-item"><h3>Melayani dengan sukacita</h3><p>Pelayanan bukan beban. Torang layani dengan hati yang senang, dari kegiatan kecil sampai acara besar.</p></article></div></div></section>
-<section class="jelajah"><div class="container-xl"><h2 class="section-title">Mulai dari mana?</h2><div class="jelajah-links"><a href="index.html#jadwal">Lihat jadwal ibadah</a><a href="dokumentasi.html">Lihat dokumentasi</a><a href="kegiatan.html">Lihat kegiatan</a></div></div></section></main><footer class="footer"><div class="container-xl footer-grid"><div class="footer-part"><p class="footer-part-label">Part of:</p><div class="footer-part-brand"><p>Pemuda<br><strong>GMIM</strong></p></div></div><div class="footer-col"><h2>Media Social</h2><ul class="footer-list"><li><a href="https://instagram.com/torang_pekawan" target="_blank" rel="noopener"><i class="bi bi-instagram"></i> @torang_pekawan</a></li><li><a href="#" target="_blank"><i class="bi bi-youtube"></i> Torang Pekawan</a></li></ul></div><div class="footer-col"><h2>Contact Us</h2><ul class="footer-list"><li>08XXXXXXXXXX</li><li><a href="mailto:pemudakalvariwangurer@gmail.com">pemudakalvariwangurer@gmail.com</a></li></ul></div><div class="footer-col"><a href="admin/login.html">Admin Login</a></div></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/supabase-config.js"></script><script src="js/app.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script></body></html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tentang Torang Pekawan">
+  <title>Tentang | Torang Pekawan</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
+    <div class="container-fluid px-lg-5">
+      <a class="navbar-brand" href="index.html">Torang Pekawan</a>
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Buka menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto gap-lg-4">
+          <li class="nav-item"><a class="nav-link" href="index.html">Beranda</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#jadwal">Jadwal Ibadah</a></li>
+          <li class="nav-item"><a class="nav-link" href="kegiatan.html">Kegiatan</a></li>
+          <li class="nav-item"><a class="nav-link" href="tentang.html">Tentang Pekawan</a></li>
+          <li class="nav-item"><a class="nav-link" href="lainnya.html">Lainnya</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ===== HERO TENTANG ===== -->
+    <section class="hero hero--tentang">
+      <div class="container-xl hero-grid">
+        <div class="hero-text">
+          <h1>Tentang Torang Pekawan</h1>
+          <p>Torang Pekawan adalah ruang untuk bertumbuh bersama. Di sini kamu bisa mengikuti jadwal ibadah, kegiatan, dan acara terbaru.</p>
+        </div>
+        <div class="hero-side">
+          <figure class="hero-photo">
+            <img src="assets/foto/pena.png" alt="Logo Torang Pekawan" onerror="this.style.display='none'">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PILAR ===== -->
+    <section class="pilar">
+      <div class="container-xl">
+        <h2 class="section-title">Yang kami jalani</h2>
+        <div class="pilar-grid">
+          <article class="pilar-item">
+            <h3>Bertumbuh dalam iman</h3>
+            <p>Ruang untuk belajar, berdoa, dan bertumbuh bersama lewat ibadah dan persekutuan.</p>
+          </article>
+          <article class="pilar-item">
+            <h3>Berkarya bagi sesama</h3>
+            <p>Setiap orang punya talenta. Di sini talenta itu dipakai untuk menolong dan menguatkan orang lain.</p>
+          </article>
+          <article class="pilar-item">
+            <h3>Melayani dengan sukacita</h3>
+            <p>Pelayanan bukan beban. Torang layani dengan hati yang senang, dari kegiatan kecil sampai acara besar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== JELAJAH ===== -->
+    <section class="jelajah">
+      <div class="container-xl">
+        <h2 class="section-title">Mulai dari mana?</h2>
+        <div class="jelajah-links">
+          <a href="index.html#jadwal">Lihat jadwal ibadah</a>
+          <a href="dokumentasi.html">Lihat dokumentasi</a>
+          <a href="kegiatan.html">Lihat kegiatan</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container-xl footer-grid">
+     <div class="footer-part">
+  <p class="footer-part-label">Part of:</p>
+  <div class="footer-part-brand">
+    <img src="assets/foto/pemuda-gmim.png" alt="Logo Pemuda GMIM" class="footer-logo">
+    <p>Pemuda<br><strong>GMIM</strong></p>
+  </div>
+</div>
+      <div class="footer-col">
+        <h2>Media Social</h2>
+        <ul class="footer-list">
+          <li>
+            <a href="https://instagram.com/torang_pekawan" target="_blank" rel="noopener">
+              <i class="bi bi-instagram"></i> @torang_pekawan
+            </a>
+          </li>
+          <li>
+            <a href="#" target="_blank">
+              <i class="bi bi-youtube"></i> Torang Pekawan
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Contact Us</h2>
+        <ul class="footer-list">
+          <li>08XXXXXXXXXX</li>
+          <li><a href="mailto:torangpekawan2026@gmail.com">torangpekawan2026@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

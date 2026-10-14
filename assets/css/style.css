@@ -650,3 +650,78 @@ body {
     border-radius: 20px;
   }
 }
+/* ===== KEGIATAN GRID ===== */
+.kegiatan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.kegiatan-kartu {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(67, 48, 124, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.kegiatan-kartu:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(67, 48, 124, 0.22);
+}
+
+.kegiatan-foto {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #eee;
+}
+
+.kegiatan-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.kegiatan-kartu:hover .kegiatan-foto img {
+  transform: scale(1.05);
+}
+
+.kegiatan-judul {
+  padding: 1rem 1.25rem 1.25rem;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--purple-deep);
+  line-height: 1.35;
+}
+
+@media (max-width: 991.98px) {
+  .kegiatan-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .kegiatan-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.footer-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+@media (max-width: 991.98px) {
+  .footer-logo {
+    width: 56px;
+    height: 56px;
+  }
+}
