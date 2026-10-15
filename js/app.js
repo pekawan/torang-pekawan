@@ -133,10 +133,28 @@ async function loadBingkai() {
   target.innerHTML = `<img src="${esc(url)}" alt="Foto Torang Pekawan">`;
 }
 
+/* ============ RENUNGAN ============ */
+async function loadRenungan() {
+  const target = $('#renungan');
+  if (!target) return;
+  const { data, error } = await sb.from('pengaturan').select('key, value')
+    .in('key', ['renungan_ayat', 'renungan_judul', 'renungan_isi']);
+  if (error) return; // placeholder tetap tampil
+
+  const r = Object.fromEntries((data || []).map(x => [x.key, x.value || '']));
+  if (!r.renungan_isi.trim()) return;
+
+  target.innerHTML = `
+    ${r.renungan_ayat ? `<p class="renungan-ayat">${esc(r.renungan_ayat)}</p>` : ''}
+    ${r.renungan_judul ? `<h2 class="renungan-judul">${esc(r.renungan_judul)}</h2>` : ''}
+    <div class="renungan-isi">${esc(r.renungan_isi)}</div>`;
+}
+
 /* ============ INIT ============ */
 document.addEventListener('DOMContentLoaded', () => {
   loadJadwal();
   loadGallery();
   loadKegiatan();
   loadBingkai();
+  loadRenungan();
 });

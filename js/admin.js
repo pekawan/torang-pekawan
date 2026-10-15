@@ -24,7 +24,8 @@ async function initAdmin() {
     listBulan(),
     listPhotos(),
     listKegiatan(),
-    loadBingkai()
+    loadBingkai(),
+    loadRenungan()
   ]);
 }
 
@@ -227,6 +228,58 @@ async function getBingkaiPath() {
   return data?.value || '';
 }
 
+/* ============ RENUNGAN ============ */
+const RENUNGAN_KEYS = ['renungan_ayat', 'renungan_judul', 'renungan_isi'];
+
+async function getRenungan() {
+  const { data, error } = await sb.from('pengaturan').select('key, value').in('key', RENUNGAN_KEYS);
+  if (error) return { error };
+  const r = Object.fromEntries((data || []).map(x => [x.key, x.value]));
+  return { ayat: r.renungan_ayat || '', judul: r.renungan_judul || '', isi: r.renungan_isi || '' };
+}
+
+async function setPengaturan(key, value) {
+  const { data: ada } = await sb.from('pengaturan').select('key').eq('key', key).maybeSingle();
+  return ada
+    ? await sb.from('pengaturan').update({ value, updated_at: new Date().toISOString() }).eq('key', key)
+    : await sb.from('pengaturan').insert({ key, value });
+}
+
+function updateHitungRenungan() {
+  const isi = $('#renungan-isi'), hitung = $('#renungan-hitung');
+  if (isi && hitung) hitung.textContent = `${isi.value.length} / 5000`;
+}
+
+async function loadRenungan() {
+  if (!$('#renungan-form')) return;
+  const r = await getRenungan();
+  if (r.error) { msg('Gagal membaca renungan: ' + r.error.message); return; }
+  $('#renungan-ayat').value = r.ayat;
+  $('#renungan-judul').value = r.judul;
+  $('#renungan-isi').value = r.isi;
+  updateHitungRenungan();
+}
+
+async function simpanRenungan(kosong = false) {
+  const ayat = kosong ? '' : $('#renungan-ayat').value.trim();
+  const judul = kosong ? '' : $('#renungan-judul').value.trim();
+  const isi = kosong ? '' : $('#renungan-isi').value.trim();
+
+  if (ayat.length > 100 || judul.length > 100) { msg('Ayat dan judul maksimal 100 karakter.'); return; }
+  if (isi.length > 5000) { msg('Isi renungan maksimal 5000 karakter.'); return; }
+
+  const hasil = await Promise.all([
+    setPengaturan('renungan_ayat', ayat),
+    setPengaturan('renungan_judul', judul),
+    setPengaturan('renungan_isi', isi)
+  ]);
+  const gagal = hasil.find(h => h.error);
+  if (gagal) { msg('Gagal menyimpan renungan: ' + gagal.error.message); return; }
+
+  msg(kosong ? 'Renungan dikosongkan.' : 'Renungan berhasil disimpan.', true);
+  await loadRenungan();
+}
+
 /* ============ EVENT ============ */
 document.addEventListener('DOMContentLoaded', async () => {
   /* --- LOGIN --- */
@@ -244,7 +297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /* --- INIT --- */
-  if ($('#admin-jadwal') || $('#admin-foto') || $('#admin-kegiatan') || $('#admin-bulan') || $('#bingkai-preview')) {
+  if ($('#admin-jadwal') || $('#admin-foto') || $('#admin-kegiatan') || $('#admin-bulan') || $('#bingkai-preview') || $('#renungan-form')) {
     await initAdmin();
   }
 
@@ -362,6 +415,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     await simpanBingkai('');
     msg('Foto bingkai dihapus.', true);
     await loadBingkai();
+  });
+
+  /* --- RENUNGAN --- */
+  $('#renungan-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    await simpanRenungan();
+  });
+
+  $('#renungan-isi')?.addEventListener('input', updateHitungRenungan);
+
+  $('#hapus-renungan')?.addEventListener('click', async () => {
+    if (!confirm('Kosongkan renungan di website?')) return;
+    await simpanRenungan(true);
   });
 
   /* --- DELEGASI KLIK --- */
