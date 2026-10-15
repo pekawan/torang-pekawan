@@ -16,16 +16,18 @@
 
 <body class="bg-light">
 
-  <nav class="navbar navbar-dark bg-pekawan">
-    <div class="container" style="max-width: 820px;">
-      <span class="navbar-brand fw-bold">Admin Pekawan</span>
-      <div class="d-flex align-items-center gap-2">
-        <small class="text-white-50 d-none d-sm-inline" id="admin-email"></small>
-        <a class="btn btn-outline-light btn-sm" href="../lainnya.html" target="_blank">Lihat di website</a>
-        <button type="button" class="btn btn-light btn-sm" id="logout">Keluar</button>
-      </div>
+  <nav class="navbar navbar-dark" style="background:#43307c">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">Admin Pekawan</a>
+    <div class="text-white d-flex align-items-center gap-2">
+      <a class="btn btn-sm btn-outline-light" href="index.html">Jadwal</a>
+      <a class="btn btn-sm btn-light" href="renungan.html">Renungan</a>
+      <a class="btn btn-sm btn-outline-light" href="kegiatan.html">Kegiatan</a>
+      <a class="btn btn-sm btn-outline-light" href="dokumentasi.html">Dokumentasi</a>
+      <button class="btn btn-sm btn-outline-light" id="logout">Keluar</button>
     </div>
-  </nav>
+  </div>
+</nav>
 
   <main class="container py-4" style="max-width: 820px;">
     <h1 class="h3 mb-4">Renungan</h1>
@@ -58,6 +60,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/admin.js"></script>
+  <script src="../assets/js/admin-renungan.js"></script>
 </body>
 
 </html>
