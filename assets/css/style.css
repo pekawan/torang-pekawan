@@ -835,3 +835,175 @@ body {
     max-width: 160px;
   }
 }
+/* ===== LOGO NAVBAR ===== */
+.navbar-logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 575.98px) {
+  .navbar-logo {
+    height: 45px;
+  }
+}
+
+/* ============================================================
+   ===== FOOTER (SATU-SATUNYA DEFINISI) =====
+   ============================================================ */
+
+/* Container utama footer */
+.footer {
+  color: #fff;
+  padding: 3rem 0 4rem;
+  background: linear-gradient(20deg, #7050c0 0%, #5b41a0 45%, #43307c 100%);
+}
+
+/* Grid 3 kolom: logo | media social | contact */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.2fr;
+  gap: 3rem;
+  align-items: start;   /* semua kolom rata atas */
+}
+
+/* ===== KOLOM KIRI: Logo + Part of + GMIM ===== */
+.footer-part {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  align-self: start;    /* rata atas, sejajar dengan Media Social */
+}
+
+/* Logo Pekawan di footer */
+.footer-logo-top {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  display: block;
+  margin: 0;
+}
+
+/* Link pembungkus logo Pekawan (biar bisa diklik) */
+.footer-logo-link {
+  display: inline-block;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  border-radius: 12px;
+}
+
+.footer-logo-link:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.footer-logo-link:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 4px;
+}
+
+/* Label "Part of:" */
+.footer-part-label {
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Brand Pemuda GMIM */
+.footer-part-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+}
+
+.footer-part-brand img {
+  object-fit: contain;
+}
+
+.footer-part-brand p {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.footer-part-brand strong {
+  font-weight: 700;
+}
+
+/* Logo Pemuda GMIM */
+.footer-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+/* ===== KOLOM TENGAH & KANAN: Media Social & Contact ===== */
+.footer-col h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 1.75rem;
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.footer-list a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-list a:hover,
+.footer-list a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-list .bi {
+  margin-right: 0.6rem;
+  font-size: 1.15rem;
+  vertical-align: -0.1em;
+}
+
+/* ===== RESPONSIVE FOOTER ===== */
+@media (max-width: 991.98px) {
+  .footer {
+    padding: 3rem 0 3rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-part {
+    align-items: center;
+    text-align: center;
+    order: 3;
+    gap: 1rem;
+  }
+
+  .footer-part-brand {
+    justify-content: center;
+  }
+
+  .footer-logo-top {
+    width: 140px;
+    height: 140px;
+  }
+
+  .footer-logo {
+    width: 56px;
+    height: 56px;
+  }
+}
