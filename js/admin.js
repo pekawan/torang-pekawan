@@ -239,10 +239,18 @@ async function getRenungan() {
 }
 
 async function setPengaturan(key, value) {
-  const { data: ada } = await sb.from('pengaturan').select('key').eq('key', key).maybeSingle();
-  return ada
-    ? await sb.from('pengaturan').update({ value, updated_at: new Date().toISOString() }).eq('key', key)
-    : await sb.from('pengaturan').insert({ key, value });
+  const { data: ada, error: e1 } = await sb.from('pengaturan').select('key').eq('key', key).maybeSingle();
+  if (e1) return { error: e1 };
+
+  const hasil = ada
+    ? await sb.from('pengaturan').update({ value, updated_at: new Date().toISOString() }).eq('key', key).select('key')
+    : await sb.from('pengaturan').insert({ key, value }).select('key');
+
+  // Supabase tidak memberi error bila RLS menolak UPDATE (0 baris berubah). Tangkap di sini.
+  if (!hasil.error && (!hasil.data || !hasil.data.length)) {
+    return { error: { message: `"${key}" tidak tersimpan: ditolak kebijakan akses (RLS) tabel pengaturan.` } };
+  }
+  return hasil;
 }
 
 function updateHitungRenungan() {

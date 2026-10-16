@@ -133,21 +133,50 @@ async function loadBingkai() {
   target.innerHTML = `<img src="${esc(url)}" alt="Foto Torang Pekawan">`;
 }
 
-/* ============ RENUNGAN ============ */
 async function loadRenungan() {
-  const target = $('#renungan');
+  const target = document.querySelector('#renungan');
   if (!target) return;
-  const { data, error } = await sb.from('pengaturan').select('key, value')
-    .in('key', ['renungan_ayat', 'renungan_judul', 'renungan_isi']);
-  if (error) return; // placeholder tetap tampil
 
-  const r = Object.fromEntries((data || []).map(x => [x.key, x.value || '']));
-  if (!r.renungan_isi.trim()) return;
+  target.innerHTML = '<p>Memuat renungan...</p>';
+
+  const { data, error } = await sb
+    .from('pengaturan')
+    .select('key, value')
+    .in('key', [
+      'renungan_ayat',
+      'renungan_judul',
+      'renungan_isi'
+    ]);
+
+  if (error) {
+    console.error('Renungan gagal dimuat:', error);
+    target.innerHTML =
+      '<p>Renungan gagal dimuat. Periksa koneksi dan izin akses Supabase.</p>';
+    return;
+  }
+
+  const r = Object.fromEntries(
+    (data || []).map(x => [x.key, x.value || ''])
+  );
+
+  const isi = (r.renungan_isi || '').trim();
+
+  if (!isi) {
+    target.innerHTML = `
+      <div class="renungan-kosong">
+        <p>Renungan belum tersedia.</p>
+      </div>`;
+    return;
+  }
 
   target.innerHTML = `
-    ${r.renungan_ayat ? `<p class="renungan-ayat">${esc(r.renungan_ayat)}</p>` : ''}
-    ${r.renungan_judul ? `<h2 class="renungan-judul">${esc(r.renungan_judul)}</h2>` : ''}
-    <div class="renungan-isi">${esc(r.renungan_isi)}</div>`;
+    ${r.renungan_ayat
+      ? `<p class="renungan-ayat">${esc(r.renungan_ayat)}</p>`
+      : ''}
+    ${r.renungan_judul
+      ? `<h2 class="renungan-judul">${esc(r.renungan_judul)}</h2>`
+      : ''}
+    <div class="renungan-isi">${esc(isi)}</div>`;
 }
 
 /* ============ INIT ============ */
