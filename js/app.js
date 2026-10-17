@@ -18,7 +18,6 @@ function cardJadwal(x) {
   </article>`;
 }
 
-/* ============ JADWAL ============ */
 async function loadJadwal() {
   const target = $('#jadwal-list');
   if (!target) return;
@@ -32,7 +31,6 @@ async function loadJadwal() {
     ? data.map(cardJadwal).join('')
     : '<p>Belum ada jadwal ibadah.</p>';
 
-  // Bulan + foto khadim
   const bulanEl = $('#jadwal-bulan');
   const khadimEl = $('#jadwal-khadim');
 
@@ -71,7 +69,6 @@ async function loadJadwal() {
   }
 }
 
-/* ============ DOKUMENTASI ============ */
 async function loadGallery() {
   const target = $('#galeri-grid');
   if (!target) return;
@@ -96,7 +93,6 @@ async function loadGallery() {
     : '<p>Dokumentasi akan segera hadir.</p>';
 }
 
-/* ============ KEGIATAN ============ */
 async function loadKegiatan() {
   const target = $('#kegiatan-list');
   if (!target) return;
@@ -121,7 +117,6 @@ async function loadKegiatan() {
     : '<p>Belum ada kegiatan.</p>';
 }
 
-/* ============ FOTO BINGKAI ============ */
 async function loadBingkai() {
   const target = $('#foto-bingkai');
   if (!target) return;
@@ -132,7 +127,7 @@ async function loadBingkai() {
   let paths = [];
   try {
     paths = JSON.parse(data?.value) || [];
-    if (!Array.isArray(paths)) paths = [data.value]; // fallback jika data lama cuma 1 string
+    if (!Array.isArray(paths)) paths = [data.value]; 
   } catch(e) {
     if (data?.value) paths = [data.value];
   }
@@ -142,7 +137,6 @@ async function loadBingkai() {
     return;
   }
 
-  // Jika hanya 1 foto
   if (paths.length === 1) {
     const url = sb.storage.from('dokumentasi').getPublicUrl(paths[0]).data.publicUrl;
     target.innerHTML = `
@@ -153,7 +147,6 @@ async function loadBingkai() {
     return;
   }
 
-  // Jika lebih dari 1, buat Carousel
   const indicators = paths.map((_, i) => `
     <button type="button" data-bs-target="#carouselBingkai" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Slide ${i+1}"></button>
   `).join('');
@@ -183,7 +176,6 @@ async function loadBingkai() {
   `;
 }
 
-/* ============ RENUNGAN ============ */
 async function loadRenungan() {
   const target = document.querySelector('#renungan');
   if (!target) return;
@@ -201,37 +193,53 @@ async function loadRenungan() {
 
   if (error) {
     console.error('Renungan gagal dimuat:', error);
-    target.innerHTML =
-      '<p>Renungan gagal dimuat. Periksa koneksi dan izin akses Supabase.</p>';
+    target.innerHTML = '<p>Renungan gagal dimuat. Periksa koneksi dan izin akses Supabase.</p>';
     return;
   }
 
-  const r = Object.fromEntries(
-    (data || []).map(x => [x.key, x.value || ''])
-  );
-
+  const r = Object.fromEntries((data || []).map(x => [x.key, x.value || '']));
   const isi = (r.renungan_isi || '').trim();
 
   if (!isi) {
-    target.innerHTML = `
-      <div class="renungan-kosong">
-        <p>Renungan belum tersedia.</p>
-      </div>`;
+    target.innerHTML = `<div class="renungan-kosong"><p>Renungan belum tersedia.</p></div>`;
     return;
   }
 
   target.innerHTML = `
-    ${r.renungan_ayat
-      ? `<p class="renungan-ayat">${esc(r.renungan_ayat)}</p>`
-      : ''}
-    ${r.renungan_judul
-      ? `<h2 class="renungan-judul">${esc(r.renungan_judul)}</h2>`
-      : ''}
+    ${r.renungan_ayat ? `<p class="renungan-ayat">${esc(r.renungan_ayat)}</p>` : ''}
+    ${r.renungan_judul ? `<h2 class="renungan-judul">${esc(r.renungan_judul)}</h2>` : ''}
     <div class="renungan-isi">${esc(isi)}</div>`;
+}
+
+/* ============ LOGO NAVBAR ============ */
+async function loadLogoNavbar() {
+  const target = document.querySelector('.navbar-logo');
+  if (!target) return;
+  
+  const { data } = await sb.from('pengaturan').select('value').eq('key', 'logo_navbar').maybeSingle();
+  if (data && data.value) {
+    const url = sb.storage.from('dokumentasi').getPublicUrl(data.value).data.publicUrl;
+    target.src = url;
+  }
+}
+
+/* ============ FOTO HERO ============ */
+async function loadHero() {
+  const target = document.querySelector('#hero-image');
+  if (!target) return;
+
+  const { data } = await sb.from('pengaturan').select('value').eq('key', 'foto_hero').maybeSingle();
+  if (data && data.value) {
+    const url = sb.storage.from('dokumentasi').getPublicUrl(data.value).data.publicUrl;
+    target.src = url;
+    target.style.display = 'block'; 
+  }
 }
 
 /* ============ INIT ============ */
 document.addEventListener('DOMContentLoaded', () => {
+  loadLogoNavbar();
+  loadHero(); // Memuat foto hero
   loadJadwal();
   loadGallery();
   loadKegiatan();

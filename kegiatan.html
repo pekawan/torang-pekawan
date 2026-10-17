@@ -24,20 +24,36 @@
       <img src="assets/foto/logo-pekawan.png" alt="Logo Torang Pekawan" class="navbar-logo">
       <span>Torang Pekawan</span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Buka menu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="nav">
-      <ul class="navbar-nav ms-auto gap-lg-4">
-        <li class="nav-item"><a class="nav-link" href="index.html">Beranda</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.html#jadwal">Jadwal Ibadah</a></li>
-        <li class="nav-item"><a class="nav-link" href="renungan.html">Renungan</a></li>
-        <li class="nav-item"><a class="nav-link" href="kegiatan.html">Kegiatan</a></li>
-        <li class="nav-item"><a class="nav-link" href="tentang.html">Tentang Pekawan</a></li>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Buka menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+     <div class="collapse navbar-collapse" id="nav">
+  <ul class="navbar-nav ms-auto gap-lg-4">
+    <li class="nav-item">
+      <a class="nav-link" href="index.html">Beranda</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="index.html#jadwal">Jadwal Ibadah</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="renungan.html">Renungan</a>
+    </li>
+    
+    <!-- Dropdown Kegiatan -->
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Lainya
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+        <!-- Ganti href di bawah ini dengan link halaman/sub-halaman yang diinginkan -->
+        <li><a class="dropdown-item" href="kegiatan.html">Kegiatan</a></li>
+        <li><a class="dropdown-item" href="tentang.html">Tentang Pekawan</a></li>
       </ul>
+    </li>
+  </ul>
+</div>
     </div>
-  </div>
-</nav>
+  </nav>
 
  <main>
   <section class="page">

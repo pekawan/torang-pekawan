@@ -25,7 +25,9 @@ async function initAdmin() {
     listPhotos(),
     listKegiatan(),
     loadBingkai(),
-    loadRenungan()
+    loadRenungan(),
+    loadLogoNavbar(),
+    loadHero() // Memuat preview foto hero di admin
   ]);
 }
 
@@ -55,9 +57,7 @@ async function listBulan() {
       <tr>
         <td>${esc(x.nama)}</td>
         <td>${url ? `<img src="${esc(url)}" alt="" style="width:60px;height:60px;object-fit:cover;border-radius:8px">` : '-'}</td>
-        <td>${x.aktif
-          ? '<span class="badge bg-success">Aktif</span>'
-          : '<span class="badge bg-secondary">Nonaktif</span>'}</td>
+        <td>${x.aktif ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Nonaktif</span>'}</td>
         <td>
           <button class="btn btn-sm btn-warning" data-edit-bulan="${x.id}" data-nama="${esc(x.nama)}">Edit</button>
           <button class="btn btn-sm btn-outline-secondary" data-toggle-bulan="${x.id}" data-aktif="${x.aktif}">
@@ -100,10 +100,7 @@ function resetFormBulan() {
 
 /* ============ FOTO KHADIM ============ */
 async function getBulanAktif() {
-  const { data } = await sb.from('bulan')
-    .select('*').eq('aktif', true)
-    .order('created_at', { ascending: false })
-    .limit(1);
+  const { data } = await sb.from('bulan').select('*').eq('aktif', true).order('created_at', { ascending: false }).limit(1);
   return data && data.length ? data[0] : null;
 }
 
@@ -135,10 +132,7 @@ async function simpanKhadim(file) {
 
   if (file) {
     if (file.size > MAX_SIZE) { msg('Ukuran foto maksimal 5 MB.'); return; }
-
-    if (fotoPath) {
-      await sb.storage.from(BUCKET).remove([fotoPath]);
-    }
+    if (fotoPath) await sb.storage.from(BUCKET).remove([fotoPath]);
 
     const newPath = `khadim/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     const { error: upErr } = await sb.storage.from(BUCKET).upload(newPath, file, { upsert: false });
@@ -147,11 +141,7 @@ async function simpanKhadim(file) {
   }
 
   const judul = $('#khadim-judul').value.trim();
-
-  const { error } = await sb.from('bulan').update({
-    foto_path: fotoPath,
-    foto_judul: judul
-  }).eq('id', aktif.id);
+  const { error } = await sb.from('bulan').update({ foto_path: fotoPath, foto_judul: judul }).eq('id', aktif.id);
 
   if (error) { msg('Gagal menyimpan foto khadim: ' + error.message); return; }
   msg('Foto khadim berhasil disimpan.', true);
@@ -161,9 +151,7 @@ async function simpanKhadim(file) {
 async function hapusKhadim() {
   const aktif = await getBulanAktif();
   if (!aktif) return;
-  if (aktif.foto_path) {
-    await sb.storage.from(BUCKET).remove([aktif.foto_path]);
-  }
+  if (aktif.foto_path) await sb.storage.from(BUCKET).remove([aktif.foto_path]);
   await sb.from('bulan').update({ foto_path: '', foto_judul: '' }).eq('id', aktif.id);
   msg('Foto khadim dihapus.', true);
   await listBulan();
@@ -203,7 +191,7 @@ async function listKegiatan() {
   }).join('') || '<tr><td colspan="4">Belum ada kegiatan.</td></tr>';
 }
 
-/* ============ FOTO BINGKAI (MULTIPLE) ============ */
+/* ============ FOTO BINGKAI ============ */
 async function loadBingkai() {
   const box = $('#bingkai-preview'); if (!box) return;
   const { data, error } = await sb.from('pengaturan').select('value').eq('key', 'foto_bingkai').maybeSingle();
@@ -236,6 +224,56 @@ async function simpanBingkai(jsonArray) {
 
 async function getBingkaiPath() {
   const { data } = await sb.from('pengaturan').select('value').eq('key', 'foto_bingkai').maybeSingle();
+  return data?.value || '';
+}
+
+/* ============ LOGO NAVBAR ============ */
+async function loadLogoNavbar() {
+  const box = $('#logo-preview'); if (!box) return;
+  const { data, error } = await sb.from('pengaturan').select('value').eq('key', 'logo_navbar').maybeSingle();
+  if (error) return;
+  
+  const path = data?.value || 'assets/foto/logo-pekawan.png';
+  const url = path.startsWith('http') ? path : publicUrl(path);
+  
+  box.innerHTML = `<img src="${esc(url)}" alt="Logo Navbar" style="height:60px;object-fit:contain;background:#f8f9fa;padding:4px;border-radius:8px;">`;
+}
+
+async function simpanLogoNavbar(path) {
+  const { data: existing } = await sb.from('pengaturan').select('key').eq('key', 'logo_navbar').maybeSingle();
+  if (existing) {
+    return await sb.from('pengaturan').update({ value: path, updated_at: new Date().toISOString() }).eq('key', 'logo_navbar');
+  }
+  return await sb.from('pengaturan').insert({ key: 'logo_navbar', value: path });
+}
+
+async function getLogoNavbarPath() {
+  const { data } = await sb.from('pengaturan').select('value').eq('key', 'logo_navbar').maybeSingle();
+  return data?.value || '';
+}
+
+/* ============ FOTO HERO ============ */
+async function loadHero() {
+  const box = $('#hero-preview'); if (!box) return;
+  const { data } = await sb.from('pengaturan').select('value').eq('key', 'foto_hero').maybeSingle();
+  if (data && data.value) {
+    const url = publicUrl(data.value);
+    box.innerHTML = `<img src="${esc(url)}" alt="Preview Hero" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;">`;
+  } else {
+    box.innerHTML = '<p class="text-muted small">Belum ada foto kustom. Menggunakan gambar default.</p>';
+  }
+}
+
+async function simpanHero(path) {
+  const { data: existing } = await sb.from('pengaturan').select('key').eq('key', 'foto_hero').maybeSingle();
+  if (existing) {
+    return await sb.from('pengaturan').update({ value: path, updated_at: new Date().toISOString() }).eq('key', 'foto_hero');
+  }
+  return await sb.from('pengaturan').insert({ key: 'foto_hero', value: path });
+}
+
+async function getHeroPath() {
+  const { data } = await sb.from('pengaturan').select('value').eq('key', 'foto_hero').maybeSingle();
   return data?.value || '';
 }
 
@@ -300,7 +338,6 @@ async function simpanRenungan(kosong = false) {
 
 /* ============ EVENT ============ */
 document.addEventListener('DOMContentLoaded', async () => {
-  /* --- LOGIN --- */
   if ($('#login-form')) {
     $('#login-form').addEventListener('submit', async e => {
       e.preventDefault();
@@ -314,18 +351,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  /* --- INIT --- */
-  if ($('#admin-jadwal') || $('#admin-foto') || $('#admin-kegiatan') || $('#admin-bulan') || $('#bingkai-preview') || $('#renungan-form')) {
+  if ($('#admin-jadwal') || $('#admin-foto') || $('#admin-kegiatan') || $('#admin-bulan') || $('#bingkai-preview') || $('#renungan-form') || $('#logo-preview') || $('#hero-preview')) {
     await initAdmin();
   }
 
-  /* --- LOGOUT --- */
   $('#logout')?.addEventListener('click', async () => {
     await sb.auth.signOut();
     location.href = 'login.html';
   });
 
-  /* --- TAMBAH JADWAL --- */
   $('#jadwal-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const payload = {
@@ -340,13 +374,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     else { msg('Jadwal berhasil disimpan.', true); e.target.reset(); await listJadwal(); }
   });
 
-  /* --- BULAN FORM --- */
   $('#bulan-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     await simpanBulan();
   });
 
-  /* --- FOTO KHADIM --- */
   $('#khadim-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const file = $('#khadim-file').files[0] || null;
@@ -359,7 +391,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await hapusKhadim();
   });
 
-  /* --- UPLOAD DOKUMENTASI --- */
   $('#upload-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const file = $('#foto').files[0];
@@ -380,7 +411,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await listPhotos();
   });
 
-  /* --- UPLOAD KEGIATAN --- */
   $('#kegiatan-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const file = $('#foto-kegiatan').files[0];
@@ -401,7 +431,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await listKegiatan();
   });
 
-  /* --- UPLOAD FOTO BINGKAI (MULTIPLE) --- */
   $('#bingkai-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const files = $('#bingkai-file').files;
@@ -437,7 +466,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  /* --- HAPUS FOTO BINGKAI --- */
   $('#hapus-bingkai')?.addEventListener('click', async () => {
     if (!confirm('Hapus SEMUA foto bingkai?')) return;
     const oldPathStr = await getBingkaiPath();
@@ -455,7 +483,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadBingkai();
   });
 
-  /* --- RENUNGAN --- */
+  $('#logo-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const file = $('#logo-file').files[0];
+    if (!file) { msg('Pilih file logo.'); return; }
+    if (file.size > MAX_SIZE) { msg('Ukuran maksimal 5 MB.'); return; }
+
+    const oldPath = await getLogoNavbarPath();
+    const path = `logo/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    
+    const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false });
+    if (upErr) { msg('Upload gagal: ' + upErr.message); return; }
+
+    const { error } = await simpanLogoNavbar(path);
+    if (error) { msg('Gagal menyimpan logo: ' + error.message); return; }
+
+    if (oldPath && !oldPath.startsWith('http')) {
+      await sb.storage.from(BUCKET).remove([oldPath]);
+    }
+
+    msg('Logo navbar berhasil diganti.', true);
+    e.target.reset();
+    await loadLogoNavbar();
+  });
+
+  $('#hero-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const file = $('#hero-file').files[0];
+    if (!file) { msg('Pilih file foto.'); return; }
+    if (file.size > MAX_SIZE) { msg('Ukuran maksimal 5 MB.'); return; }
+
+    const oldPath = await getHeroPath();
+    const path = `hero/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    
+    const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false });
+    if (upErr) { msg('Upload gagal: ' + upErr.message); return; }
+
+    const { error } = await simpanHero(path);
+    if (error) { msg('Gagal menyimpan foto: ' + error.message); return; }
+
+    if (oldPath) {
+      await sb.storage.from(BUCKET).remove([oldPath]);
+    }
+
+    msg('Foto Beranda berhasil diganti.', true);
+    e.target.reset();
+    await loadHero();
+  });
+
   $('#renungan-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     await simpanRenungan();
@@ -468,9 +543,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await simpanRenungan(true);
   });
 
-  /* --- DELEGASI KLIK --- */
   document.addEventListener('click', async e => {
-    /* Hapus jadwal */
     const j = e.target.closest('[data-del-jadwal]');
     if (j && confirm('Hapus jadwal ini?')) {
       const { error } = await sb.from('jadwal').delete().eq('id', j.dataset.delJadwal);
@@ -478,7 +551,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       else { msg('Jadwal dihapus.', true); await listJadwal(); }
     }
 
-    /* Hapus dokumentasi */
     const p = e.target.closest('[data-del-photo]');
     if (p && confirm('Hapus dokumentasi ini?')) {
       if (p.dataset.path) {
@@ -490,7 +562,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       else { msg('Dokumentasi dihapus.', true); await listPhotos(); }
     }
 
-    /* Hapus kegiatan */
     const k = e.target.closest('[data-del-kegiatan]');
     if (k && confirm('Hapus kegiatan ini?')) {
       if (k.dataset.path) {
@@ -502,7 +573,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       else { msg('Kegiatan dihapus.', true); await listKegiatan(); }
     }
 
-    /* Edit bulan */
     const eb = e.target.closest('[data-edit-bulan]');
     if (eb) {
       $('#bulan-id').value = eb.dataset.editBulan;
@@ -512,7 +582,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.scrollTo({ top: $('#bulan-form').offsetTop - 100, behavior: 'smooth' });
     }
 
-    /* Toggle aktif bulan */
     const tb = e.target.closest('[data-toggle-bulan]');
     if (tb) {
       const aktifBaru = tb.dataset.aktif !== 'true';
@@ -524,7 +593,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       else { msg('Status bulan diperbarui.', true); await listBulan(); }
     }
 
-    /* Hapus bulan */
     const db = e.target.closest('[data-del-bulan]');
     if (db && confirm('Hapus bulan ini?')) {
       const { error } = await sb.from('bulan').delete().eq('id', db.dataset.delBulan);

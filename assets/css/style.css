@@ -94,18 +94,18 @@ body {
 
 .hero-photo {
   width: min(100%, 480px);
-  aspect-ratio: 1;
+  height: auto;         /* Biarkan tinggi mengikuti ukuran asli foto */
   margin: 0 3rem 0 0;
   background: #eee;
-  transform: rotate(8deg);
   box-shadow: 0 14px 28px rgba(23, 18, 31, 0.25);
 }
 
 .hero-photo img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;         /* Tinggi menyesuaikan proporsi asli */
+  object-fit: contain;  /* Menampilkan seluruh isi gambar */
   display: block;
+  border-radius: 16px;  /* Opsional: agar sudutnya agak membulat */
 }
 
 .hero-note {
@@ -340,7 +340,7 @@ body {
 .hero--tentang .hero-photo {
   width: min(100%, 360px);
   margin: 0;
-  transform: rotate(-6deg);
+  /* transform: rotate(-6deg); */
 }
 
 .pilar {

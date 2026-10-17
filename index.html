@@ -21,19 +21,34 @@
   <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
     <div class="container-fluid px-lg-5">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-  <img src="assets/foto/logo-pekawan.png" alt="Logo Torang Pekawan" class="navbar-logo">
-  <span>Torang Pekawan</span>
-</a>
-      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Buka menu">
+        <img src="assets/foto/logo-pekawan.png" alt="Logo Torang Pekawan" class="navbar-logo">
+        <span>Torang Pekawan</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Buka menu">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="nav">
         <ul class="navbar-nav ms-auto gap-lg-4">
-          <li class="nav-item"><a class="nav-link" href="index.html">Beranda</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.html#jadwal">Jadwal Ibadah</a></li>
-          <li class="nav-item"><a class="nav-link" href="renungan.html">Renungan</a></li>
-          <li class="nav-item"><a class="nav-link" href="kegiatan.html">Kegiatan</a></li>
-          <li class="nav-item"><a class="nav-link" href="tentang.html">Tentang Pekawan</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Beranda</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html#jadwal">Jadwal Ibadah</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="renungan.html">Renungan</a>
+          </li>
+          
+          <!-- Dropdown Lainnya -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Lainnya
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+              <li><a class="dropdown-item" href="kegiatan.html">Kegiatan</a></li>
+              <li><a class="dropdown-item" href="tentang.html">Tentang Pekawan</a></li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
@@ -50,7 +65,8 @@
         </div>
         <div class="hero-side">
           <figure class="hero-photo">
-            <img src="assets/foto/pekawan.jpg" alt="Kegiatan Torang Pekawan" onerror="this.style.display='none'">
+            <!-- Tambahan ID hero-image agar bisa diganti via admin -->
+            <img src="assets/foto/pekawan.jpg" id="hero-image" alt="Kegiatan Torang Pekawan">
           </figure>
           <p class="hero-note">
             Kepoin info kegiatan, keseruan pelayanan, dan ruang untuk bertumbuh bersama di sini.
@@ -64,12 +80,12 @@
     <section class="foto-jadwal">
       <div class="container-xl">
         <div class="galeri-bingkai">
-  <div id="foto-bingkai" style="border-radius: 28px; overflow: hidden;">
-    <div class="foto-jadwal-kosong">
-      <i class="bi bi-image"></i>
-    </div>
-  </div>
-</div>
+          <div id="foto-bingkai" style="border-radius: 28px; overflow: hidden;">
+            <div class="foto-jadwal-kosong">
+              <i class="bi bi-image"></i>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -77,15 +93,15 @@
     <section class="jadwal" id="jadwal">
       <div class="container-xl">
         <h2 class="jadwal-title">Jadwal Ibadah</h2>
-       <div class="jadwal-card">
-  <div class="jadwal-list" id="jadwal-list">
-    <p>Memuat jadwal...</p>
-  </div>
-  <div class="jadwal-kanan">
-    <h3 class="jadwal-bulan" id="jadwal-bulan">Jadwal Ibadah</h3>
-    <div id="jadwal-khadim" class="jadwal-khadim" hidden></div>
-  </div>
-</div>
+        <div class="jadwal-card">
+          <div class="jadwal-list" id="jadwal-list">
+            <p>Memuat jadwal...</p>
+          </div>
+          <div class="jadwal-kanan">
+            <h3 class="jadwal-bulan" id="jadwal-bulan">Jadwal Ibadah</h3>
+            <div id="jadwal-khadim" class="jadwal-khadim" hidden></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -107,17 +123,18 @@
   <footer class="footer">
     <div class="container-xl footer-grid">
       <div class="footer-part">
-  <a href="assets/foto/logo-pekawan.png" target="_blank" rel="noopener" class="footer-logo-link" title="Lihat logo ukuran penuh">
-    <img src="assets/foto/logo-pekawan.png" alt="Logo Torang Pekawan" class="footer-logo-top">
-  </a>
-  <p class="footer-part-label">Part of:</p>
-  <div class="footer-part-brand">
-    <a href="assets/foto/pemuda-gmim.png" target="_blank" rel="noopener" class="footer-logo-link" title="Lihat logo ukuran penuh">
-    <img src="assets/foto/pemuda-gmim.png" alt="Logo Pemuda GMIM" class="footer-logo-top">
-  </a>
-    <p>Pemuda<br><strong>GMIM</strong></p>
-  </div>
-</div>
+        <a href="assets/foto/logo-pekawan.png" target="_blank" rel="noopener" class="footer-logo-link" title="Lihat logo ukuran penuh">
+          <img src="assets/foto/logo-pekawan.png" alt="Logo Torang Pekawan" class="footer-logo-top">
+        </a>
+        <p class="footer-part-label">Part of:</p>
+        <div class="footer-part-brand">
+          <a href="assets/foto/pemuda-gmim.png" target="_blank" rel="noopener" class="footer-logo-link" title="Lihat logo ukuran penuh">
+            <img src="assets/foto/pemuda-gmim.png" alt="Logo Pemuda GMIM" class="footer-logo-top">
+          </a>
+          <p>Pemuda<br><strong>GMIM</strong></p>
+        </div>
+      </div>
+      
       <div class="footer-col">
         <h2>Media Sosial</h2>
         <ul class="footer-list">
@@ -133,10 +150,10 @@
           </li>
         </ul>
       </div>
+
       <div class="footer-col">
         <h2>Hubungi Kami</h2>
         <ul class="footer-list">
-          <li></li>
           <li><a href="mailto:torangpekawan2026@gmail.com">pemudakalvariwangurer@gmail.com</a></li>
         </ul>
       </div>

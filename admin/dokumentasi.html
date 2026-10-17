@@ -23,29 +23,62 @@
 </nav>
 
 <main class="container py-4">
-  <h1 class="h3">Kelola Dokumentasi</h1>
+  <h1 class="h3 mb-4">Kelola Tampilan & Dokumentasi</h1>
 
   <div id="msg" class="alert alert-danger" hidden></div>
 
+  <!-- LOGO NAVBAR -->
+  <div class="card card-body mb-4">
+    <h2 class="h5">Logo Navbar</h2>
+    <p class="text-muted small mb-3">
+      Logo kecil yang tampil di pojok kiri atas (navbar).
+    </p>
+    <div id="logo-preview" class="mb-3">
+      <!-- Preview logo akan muncul di sini -->
+    </div>
+    <form id="logo-form">
+      <label class="form-label">Ganti logo navbar (JPG, PNG, maks. 5 MB)</label>
+      <input id="logo-file" type="file" accept="image/jpeg,image/png" class="form-control mb-2" required>
+      <button class="btn btn-primary">Unggah logo</button>
+    </form>
+  </div>
+
+  <!-- FOTO HERO (BERANDA) -->
+  <div class="card card-body mb-4">
+    <h2 class="h5">Foto Beranda (Hero)</h2>
+    <p class="text-muted small mb-3">
+      Foto besar yang tampil di sebelah kanan teks "Salam Obor Pembangunan".
+    </p>
+    <div id="hero-preview" class="mb-3">
+      <!-- Preview Hero akan muncul di sini -->
+    </div>
+    <form id="hero-form">
+      <label class="form-label">Ganti foto beranda (JPG, PNG, WEBP, maks. 5 MB)</label>
+      <input id="hero-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" required>
+      <button class="btn btn-primary">Unggah Foto Beranda</button>
+    </form>
+  </div>
+
   <!-- FOTO BINGKAI -->
   <div class="card card-body mb-4">
-    <h2 class="h5">Foto Bingkai</h2>
+    <h2 class="h5">Foto Bingkai (Slider)</h2>
+    <p class="text-muted small mb-3">Foto yang tampil di antara Hero dan Jadwal Ibadah.</p>
     <div id="bingkai-preview" class="mb-3">
       <div class="foto-jadwal-kosong">
         <i class="bi bi-image"></i>
       </div>
     </div>
     <form id="bingkai-form" enctype="multipart/form-data">
-  <label class="form-label">Tambah foto bingkai (bisa pilih banyak sekaligus)</label>
-  <input id="bingkai-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" multiple required>
-  <button class="btn btn-primary">Unggah foto bingkai</button>
-  <button type="button" class="btn btn-outline-danger" id="hapus-bingkai">Hapus semua foto bingkai</button>
-</form>
+      <label class="form-label">Tambah foto bingkai (bisa pilih banyak sekaligus)</label>
+      <input id="bingkai-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" multiple required>
+      <button class="btn btn-primary">Unggah foto bingkai</button>
+      <button type="button" class="btn btn-outline-danger" id="hapus-bingkai">Hapus semua foto bingkai</button>
+    </form>
   </div>
 
   <!-- DOKUMENTASI -->
   <div class="card card-body mb-4">
-    <h2 class="h5">Unggah dokumentasi</h2>
+    <h2 class="h5">Unggah Dokumentasi</h2>
     <form id="upload-form">
       <label class="form-label">Judul foto</label>
       <input id="judul-foto" class="form-control mb-2">
@@ -57,7 +90,7 @@
   </div>
 
   <div class="card card-body">
-    <h2 class="h5">Daftar dokumentasi</h2>
+    <h2 class="h5">Daftar Dokumentasi</h2>
     <div class="table-responsive">
       <table class="table align-middle">
         <thead>
