@@ -215,11 +215,7 @@ async function loadBingkai() {
 }
 
 async function simpanBingkai(jsonArray) {
-  const { data: existing } = await sb.from('pengaturan').select('key').eq('key', 'foto_bingkai').maybeSingle();
-  if (existing) {
-    return await sb.from('pengaturan').update({ value: jsonArray, updated_at: new Date().toISOString() }).eq('key', 'foto_bingkai');
-  }
-  return await sb.from('pengaturan').insert({ key: 'foto_bingkai', value: jsonArray });
+  return await setPengaturan('foto_bingkai', jsonArray);
 }
 
 async function getBingkaiPath() {
@@ -233,18 +229,14 @@ async function loadLogoNavbar() {
   const { data, error } = await sb.from('pengaturan').select('value').eq('key', 'logo_navbar').maybeSingle();
   if (error) return;
   
-  const path = data?.value || 'assets/foto/logo-pekawan.png';
-  const url = path.startsWith('http') ? path : publicUrl(path);
+  const path = data?.value || '';
+  const url = !path ? '../assets/foto/pekawan.jpg' : (path.startsWith('http') ? path : publicUrl(path));
   
   box.innerHTML = `<img src="${esc(url)}" alt="Logo Navbar" style="height:60px;object-fit:contain;background:#f8f9fa;padding:4px;border-radius:8px;">`;
 }
 
 async function simpanLogoNavbar(path) {
-  const { data: existing } = await sb.from('pengaturan').select('key').eq('key', 'logo_navbar').maybeSingle();
-  if (existing) {
-    return await sb.from('pengaturan').update({ value: path, updated_at: new Date().toISOString() }).eq('key', 'logo_navbar');
-  }
-  return await sb.from('pengaturan').insert({ key: 'logo_navbar', value: path });
+  return await setPengaturan('logo_navbar', path);
 }
 
 async function getLogoNavbarPath() {
@@ -265,11 +257,7 @@ async function loadHero() {
 }
 
 async function simpanHero(path) {
-  const { data: existing } = await sb.from('pengaturan').select('key').eq('key', 'foto_hero').maybeSingle();
-  if (existing) {
-    return await sb.from('pengaturan').update({ value: path, updated_at: new Date().toISOString() }).eq('key', 'foto_hero');
-  }
-  return await sb.from('pengaturan').insert({ key: 'foto_hero', value: path });
+  return await setPengaturan('foto_hero', path);
 }
 
 async function getHeroPath() {
@@ -456,7 +444,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       } catch(err) { if (oldPathStr) oldPaths = [oldPathStr]; }
       
       const allPaths = [...oldPaths, ...newPaths];
-      await simpanBingkai(JSON.stringify(allPaths));
+      const { error: eDb } = await simpanBingkai(JSON.stringify(allPaths));
+      if (eDb) {
+        await sb.storage.from(BUCKET).remove(newPaths); // jangan tinggalkan file yatim
+        throw eDb;
+      }
       
       msg('Foto bingkai berhasil diunggah.', true);
       e.target.reset();
@@ -475,10 +467,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!Array.isArray(oldPaths)) oldPaths = oldPathStr ? [oldPathStr] : [];
     } catch(err) { if (oldPathStr) oldPaths = [oldPathStr]; }
     
+    const { error: eDb } = await simpanBingkai('[]');
+    if (eDb) { msg('Gagal menghapus foto bingkai: ' + eDb.message); return; }
     if (oldPaths.length) {
       await sb.storage.from(BUCKET).remove(oldPaths);
     }
-    await simpanBingkai('[]');
     msg('Semua foto bingkai dihapus.', true);
     await loadBingkai();
   });

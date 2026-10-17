@@ -1025,3 +1025,98 @@ body {
     aspect-ratio: 4 / 3;
   }
 }
+/* Muat SETELAH style.css */
+
+/* ----- Logo di navbar ----- */
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ----- Dropdown "Lainnya" ----- */
+.navbar-glass .dropdown-menu {
+  padding: 0.5rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.97);
+}
+
+.navbar-glass .dropdown-item {
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.navbar-glass .dropdown-item:hover,
+.navbar-glass .dropdown-item:focus-visible {
+  background: #f0eaf9;
+  color: var(--purple-deep);
+}
+
+/* ----- Logo di footer ----- */
+.footer-logo-link {
+  display: inline-block;
+}
+
+.footer-part > .footer-logo-link {
+  margin-bottom: 1.25rem;
+}
+
+.footer-logo-top {
+  display: block;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+@media (max-width: 991.98px) {
+  .footer-logo-top {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* ----- Renungan ----- */
+#renungan.galeri-bingkai {
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.renungan-ayat {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--purple-mid);
+}
+
+.renungan-judul {
+  margin-bottom: 1.25rem;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: var(--purple-deep);
+}
+
+.renungan-isi {
+  white-space: pre-line; /* baris baru dari admin tetap tampil */
+  max-width: 70ch;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.renungan-kosong {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--purple-mid);
+}
+
+.renungan-kosong .bi {
+  font-size: 3rem;
+}
+
+.renungan-kosong p {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+}

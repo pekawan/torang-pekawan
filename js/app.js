@@ -163,7 +163,7 @@ async function loadBingkai() {
   }).join('');
 
   target.innerHTML = `
-    <div id="carouselBingkai" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
+    <div id="carouselBingkai" class="carousel slide" data-bs-touch="true">
       <div class="carousel-indicators">${indicators}</div>
       <div class="carousel-inner">${slides}</div>
       <button class="carousel-control-prev" type="button" data-bs-target="#carouselBingkai" data-bs-slide="prev">
@@ -174,6 +174,12 @@ async function loadBingkai() {
       </button>
     </div>
   `;
+
+  // Markup ini disisipkan setelah halaman selesai dimuat, jadi autoplay harus dijalankan manual
+  const el = document.getElementById('carouselBingkai');
+  if (el && window.bootstrap) {
+    bootstrap.Carousel.getOrCreateInstance(el, { interval: 5000, ride: false }).cycle();
+  }
 }
 
 async function loadRenungan() {
@@ -210,7 +216,6 @@ async function loadRenungan() {
     ${r.renungan_judul ? `<h2 class="renungan-judul">${esc(r.renungan_judul)}</h2>` : ''}
     <div class="renungan-isi">${esc(isi)}</div>`;
 }
-
 /* ============ LOGO NAVBAR ============ */
 async function loadLogoNavbar() {
   const target = document.querySelector('.navbar-logo');
@@ -220,7 +225,8 @@ async function loadLogoNavbar() {
   if (data && data.value) {
     const url = sb.storage.from('dokumentasi').getPublicUrl(data.value).data.publicUrl;
     target.src = url;
-  }
+    target.style.display = 'block';
+  } 
 }
 
 /* ============ FOTO HERO ============ */
