@@ -125,14 +125,65 @@ async function loadKegiatan() {
 async function loadBingkai() {
   const target = $('#foto-bingkai');
   if (!target) return;
+  
   const { data, error } = await sb.from('pengaturan').select('value').eq('key', 'foto_bingkai').maybeSingle();
   if (error) return;
-  const path = data?.value || '';
-  if (!path) return;
-  const url = sb.storage.from('dokumentasi').getPublicUrl(path).data.publicUrl;
-  target.innerHTML = `<img src="${esc(url)}" alt="Foto Torang Pekawan">`;
+  
+  let paths = [];
+  try {
+    paths = JSON.parse(data?.value) || [];
+    if (!Array.isArray(paths)) paths = [data.value]; // fallback jika data lama cuma 1 string
+  } catch(e) {
+    if (data?.value) paths = [data.value];
+  }
+
+  if (!paths.length) {
+    target.innerHTML = `<div class="foto-jadwal-kosong"><i class="bi bi-image"></i></div>`;
+    return;
+  }
+
+  // Jika hanya 1 foto
+  if (paths.length === 1) {
+    const url = sb.storage.from('dokumentasi').getPublicUrl(paths[0]).data.publicUrl;
+    target.innerHTML = `
+      <a href="${esc(url)}" target="_blank" rel="noopener" title="Lihat foto penuh">
+        <img src="${esc(url)}" class="bingkai-img" alt="Foto Torang Pekawan" style="cursor: zoom-in;">
+      </a>
+    `;
+    return;
+  }
+
+  // Jika lebih dari 1, buat Carousel
+  const indicators = paths.map((_, i) => `
+    <button type="button" data-bs-target="#carouselBingkai" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Slide ${i+1}"></button>
+  `).join('');
+
+  const slides = paths.map((path, i) => {
+    const url = sb.storage.from('dokumentasi').getPublicUrl(path).data.publicUrl;
+    return `
+      <div class="carousel-item ${i === 0 ? 'active' : ''}">
+        <a href="${esc(url)}" target="_blank" rel="noopener" title="Lihat foto penuh">
+          <img src="${esc(url)}" class="d-block w-100 bingkai-img" alt="Foto Torang Pekawan" style="cursor: zoom-in;">
+        </a>
+      </div>
+    `;
+  }).join('');
+
+  target.innerHTML = `
+    <div id="carouselBingkai" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
+      <div class="carousel-indicators">${indicators}</div>
+      <div class="carousel-inner">${slides}</div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselBingkai" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselBingkai" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      </button>
+    </div>
+  `;
 }
 
+/* ============ RENUNGAN ============ */
 async function loadRenungan() {
   const target = document.querySelector('#renungan');
   if (!target) return;

@@ -35,13 +35,12 @@
         <i class="bi bi-image"></i>
       </div>
     </div>
-    <form id="bingkai-form">
-      <label class="form-label">Ganti foto bingkai (JPG, PNG, WEBP, maks. 5 MB)</label>
-      <input id="bingkai-file" type="file" accept="image/jpeg,image/png,image/webp"
-             class="form-control mb-2" required>
-      <button class="btn btn-primary">Unggah foto bingkai</button>
-      <button type="button" class="btn btn-outline-danger" id="hapus-bingkai">Hapus foto bingkai</button>
-    </form>
+    <form id="bingkai-form" enctype="multipart/form-data">
+  <label class="form-label">Tambah foto bingkai (bisa pilih banyak sekaligus)</label>
+  <input id="bingkai-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" multiple required>
+  <button class="btn btn-primary">Unggah foto bingkai</button>
+  <button type="button" class="btn btn-outline-danger" id="hapus-bingkai">Hapus semua foto bingkai</button>
+</form>
   </div>
 
   <!-- DOKUMENTASI -->

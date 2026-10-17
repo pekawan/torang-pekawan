@@ -203,24 +203,35 @@ async function listKegiatan() {
   }).join('') || '<tr><td colspan="4">Belum ada kegiatan.</td></tr>';
 }
 
-/* ============ FOTO BINGKAI ============ */
+/* ============ FOTO BINGKAI (MULTIPLE) ============ */
 async function loadBingkai() {
   const box = $('#bingkai-preview'); if (!box) return;
   const { data, error } = await sb.from('pengaturan').select('value').eq('key', 'foto_bingkai').maybeSingle();
   if (error) return;
-  const path = data?.value || '';
-  const url = publicUrl(path);
-  box.innerHTML = url
-    ? `<img src="${esc(url)}" alt="Foto bingkai" style="width:100%;max-height:280px;object-fit:cover;border-radius:16px">`
-    : `<div class="foto-jadwal-kosong"><i class="bi bi-image"></i></div>`;
+  
+  let paths = [];
+  try {
+    paths = JSON.parse(data?.value) || [];
+    if (!Array.isArray(paths)) paths = data.value ? [data.value] : [];
+  } catch(e) { if (data?.value) paths = [data.value]; }
+
+  if (!paths.length) {
+    box.innerHTML = `<div class="foto-jadwal-kosong"><i class="bi bi-image"></i></div>`;
+    return;
+  }
+
+  box.innerHTML = paths.map(path => {
+    const url = publicUrl(path);
+    return `<img src="${esc(url)}" alt="Foto bingkai" style="width:120px;height:80px;object-fit:cover;border-radius:8px;margin:4px;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,0.2)">`;
+  }).join('');
 }
 
-async function simpanBingkai(path) {
+async function simpanBingkai(jsonArray) {
   const { data: existing } = await sb.from('pengaturan').select('key').eq('key', 'foto_bingkai').maybeSingle();
   if (existing) {
-    return await sb.from('pengaturan').update({ value: path, updated_at: new Date().toISOString() }).eq('key', 'foto_bingkai');
+    return await sb.from('pengaturan').update({ value: jsonArray, updated_at: new Date().toISOString() }).eq('key', 'foto_bingkai');
   }
-  return await sb.from('pengaturan').insert({ key: 'foto_bingkai', value: path });
+  return await sb.from('pengaturan').insert({ key: 'foto_bingkai', value: jsonArray });
 }
 
 async function getBingkaiPath() {
@@ -246,9 +257,8 @@ async function setPengaturan(key, value) {
     ? await sb.from('pengaturan').update({ value, updated_at: new Date().toISOString() }).eq('key', key).select('key')
     : await sb.from('pengaturan').insert({ key, value }).select('key');
 
-  // Supabase tidak memberi error bila RLS menolak UPDATE (0 baris berubah). Tangkap di sini.
   if (!hasil.error && (!hasil.data || !hasil.data.length)) {
-    return { error: { message: `"${key}" tidak tersimpan: ditolak kebijakan akses (RLS) tabel pengaturan.` } };
+    return { error: { message: `"${key}" tidak tersimpan: ditolak kebijakan akses (RLS).` } };
   }
   return hasil;
 }
@@ -391,37 +401,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     await listKegiatan();
   });
 
-  /* --- UPLOAD FOTO BINGKAI --- */
+  /* --- UPLOAD FOTO BINGKAI (MULTIPLE) --- */
   $('#bingkai-form')?.addEventListener('submit', async e => {
     e.preventDefault();
-    const file = $('#bingkai-file').files[0];
-    if (!file) { msg('Pilih foto terlebih dahulu.'); return; }
-    if (file.size > MAX_SIZE) { msg('Ukuran foto maksimal 5 MB.'); return; }
+    const files = $('#bingkai-file').files;
+    if (!files.length) { msg('Pilih minimal satu foto.'); return; }
 
-    const oldPath = await getBingkaiPath();
-    const path = `bingkai/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false });
-    if (upErr) { msg('Upload gagal: ' + upErr.message); return; }
+    msg('Sedang mengunggah...', true);
+    const uploadPromises = Array.from(files).map(async (file) => {
+      if (file.size > MAX_SIZE) throw new Error(`File ${file.name} melebihi 5 MB.`);
+      const path = `bingkai/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const { error } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false });
+      if (error) throw error;
+      return path;
+    });
 
-    const { error } = await simpanBingkai(path);
-    if (error) { msg('Gagal menyimpan foto bingkai: ' + error.message); return; }
-
-    if (oldPath && oldPath !== path) {
-      await sb.storage.from(BUCKET).remove([oldPath]);
+    try {
+      const newPaths = await Promise.all(uploadPromises);
+      
+      const oldPathStr = await getBingkaiPath();
+      let oldPaths = [];
+      try {
+        oldPaths = JSON.parse(oldPathStr) || [];
+        if (!Array.isArray(oldPaths)) oldPaths = oldPathStr ? [oldPathStr] : [];
+      } catch(err) { if (oldPathStr) oldPaths = [oldPathStr]; }
+      
+      const allPaths = [...oldPaths, ...newPaths];
+      await simpanBingkai(JSON.stringify(allPaths));
+      
+      msg('Foto bingkai berhasil diunggah.', true);
+      e.target.reset();
+      await loadBingkai();
+    } catch (err) {
+      msg('Upload gagal: ' + err.message);
     }
-
-    msg('Foto bingkai berhasil diunggah.', true);
-    e.target.reset();
-    await loadBingkai();
   });
 
   /* --- HAPUS FOTO BINGKAI --- */
   $('#hapus-bingkai')?.addEventListener('click', async () => {
-    if (!confirm('Hapus foto bingkai?')) return;
-    const oldPath = await getBingkaiPath();
-    if (oldPath) await sb.storage.from(BUCKET).remove([oldPath]);
-    await simpanBingkai('');
-    msg('Foto bingkai dihapus.', true);
+    if (!confirm('Hapus SEMUA foto bingkai?')) return;
+    const oldPathStr = await getBingkaiPath();
+    let oldPaths = [];
+    try {
+      oldPaths = JSON.parse(oldPathStr) || [];
+      if (!Array.isArray(oldPaths)) oldPaths = oldPathStr ? [oldPathStr] : [];
+    } catch(err) { if (oldPathStr) oldPaths = [oldPathStr]; }
+    
+    if (oldPaths.length) {
+      await sb.storage.from(BUCKET).remove(oldPaths);
+    }
+    await simpanBingkai('[]');
+    msg('Semua foto bingkai dihapus.', true);
     await loadBingkai();
   });
 

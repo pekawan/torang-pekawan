@@ -1007,3 +1007,21 @@ body {
     height: 56px;
   }
 }
+/* ===== FOTO BINGKAI SWIPE (CAROUSEL) ===== */
+#foto-bingkai {
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(67, 48, 124, 0.18);
+}
+
+.bingkai-img {
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  width: 100%;
+}
+
+@media (max-width: 575.98px) {
+  .bingkai-img {
+    aspect-ratio: 4 / 3;
+  }
+}
