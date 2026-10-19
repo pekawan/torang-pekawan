@@ -96,8 +96,13 @@ body {
   width: min(100%, 480px);
   height: auto;         /* Biarkan tinggi mengikuti ukuran asli foto */
   margin: 0 3rem 0 0;
-  background: #eee;
-  box-shadow: 0 14px 28px rgba(23, 18, 31, 0.25);
+    /* Hapus background: #eee; dan box-shadow dari sini */
+  
+  /* Tambahkan ini agar wadahnya membulat dan memotong gambar yang keluar */
+  border-radius: 16px; 
+  box-shadow: 0 14px 28px rgba(23, 18, 31, 0.25); 
+  overflow: hidden; /* Memastikan tidak ada bagian gambar yang keluar dari sudut */
+
 }
 
 .hero-photo img {
@@ -105,7 +110,6 @@ body {
   height: auto;         /* Tinggi menyesuaikan proporsi asli */
   object-fit: contain;  /* Menampilkan seluruh isi gambar */
   display: block;
-  border-radius: 16px;  /* Opsional: agar sudutnya agak membulat */
 }
 
 .hero-note {
