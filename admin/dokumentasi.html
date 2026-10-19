@@ -69,11 +69,15 @@
       </div>
     </div>
     <form id="bingkai-form" enctype="multipart/form-data">
-      <label class="form-label">Tambah foto bingkai (bisa pilih banyak sekaligus)</label>
-      <input id="bingkai-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" multiple required>
-      <button class="btn btn-primary">Unggah foto bingkai</button>
-      <button type="button" class="btn btn-outline-danger" id="hapus-bingkai">Hapus semua foto bingkai</button>
-    </form>
+  <div class="mb-2">
+    <label class="form-label">Judul Foto Bingkai (Opsional)</label>
+    <input id="bingkai-judul" class="form-control mb-2" placeholder="Judul Foto (Opsional)">
+  </div>
+  <label class="form-label">Tambah foto bingkai (bisa pilih banyak sekaligus)</label>
+  <input id="bingkai-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" multiple required>
+  <button class="btn btn-primary">Unggah foto bingkai</button>
+  <button type="button" class="btn btn-outline-danger" id="hapus-bingkai">Hapus semua foto bingkai</button>
+</form>
   </div>
 
   <!-- DOKUMENTASI -->

@@ -124,46 +124,54 @@ async function loadBingkai() {
   const { data, error } = await sb.from('pengaturan').select('value').eq('key', 'foto_bingkai').maybeSingle();
   if (error) return;
   
-  let paths = [];
+  let items = [];
   try {
-    paths = JSON.parse(data?.value) || [];
-    if (!Array.isArray(paths)) paths = [data.value]; 
+    items = JSON.parse(data?.value) || [];
+    if (!Array.isArray(items)) items = [data.value]; 
   } catch(e) {
-    if (data?.value) paths = [data.value];
+    if (data?.value) items = [data.value];
   }
 
-  if (!paths.length) {
+  // Konversi jika ada data lama yang masih berupa string biasa
+  items = items.map(item => typeof item === 'string' ? { path: item, judul: '' } : item);
+
+  if (!items.length) {
     target.innerHTML = `<div class="foto-jadwal-kosong"><i class="bi bi-image"></i></div>`;
     return;
   }
 
-  if (paths.length === 1) {
-    const url = sb.storage.from('dokumentasi').getPublicUrl(paths[0]).data.publicUrl;
+  // Jika hanya 1 foto
+  if (items.length === 1) {
+    const item = items[0];
+    const url = sb.storage.from('dokumentasi').getPublicUrl(item.path).data.publicUrl;
     target.innerHTML = `
-      <a href="${esc(url)}" target="_blank" rel="noopener" title="Lihat foto penuh">
-        <img src="${esc(url)}" class="bingkai-img" alt="Foto Torang Pekawan" style="cursor: zoom-in;">
+      <a href="${esc(url)}" target="_blank" rel="noopener" class="bingkai-container">
+        <img src="${esc(url)}" class="bingkai-img" alt="Foto Torang Pekawan">
+        ${item.judul ? `<div class="overlay-bingkai">${esc(item.judul)}</div>` : ''}
       </a>
     `;
     return;
   }
 
-  const indicators = paths.map((_, i) => `
+  // Jika lebih dari 1, buat Carousel (Slider)
+  const indicators = items.map((_, i) => `
     <button type="button" data-bs-target="#carouselBingkai" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Slide ${i+1}"></button>
   `).join('');
 
-  const slides = paths.map((path, i) => {
-    const url = sb.storage.from('dokumentasi').getPublicUrl(path).data.publicUrl;
+  const slides = items.map((item, i) => {
+    const url = sb.storage.from('dokumentasi').getPublicUrl(item.path).data.publicUrl;
     return `
       <div class="carousel-item ${i === 0 ? 'active' : ''}">
-        <a href="${esc(url)}" target="_blank" rel="noopener" title="Lihat foto penuh">
-          <img src="${esc(url)}" class="d-block w-100 bingkai-img" alt="Foto Torang Pekawan" style="cursor: zoom-in;">
+        <a href="${esc(url)}" target="_blank" rel="noopener" class="bingkai-container">
+          <img src="${esc(url)}" class="d-block w-100 bingkai-img" alt="Foto Torang Pekawan">
+          ${item.judul ? `<div class="overlay-bingkai">${esc(item.judul)}</div>` : ''}
         </a>
       </div>
     `;
   }).join('');
 
   target.innerHTML = `
-    <div id="carouselBingkai" class="carousel slide" data-bs-touch="true">
+    <div id="carouselBingkai" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
       <div class="carousel-indicators">${indicators}</div>
       <div class="carousel-inner">${slides}</div>
       <button class="carousel-control-prev" type="button" data-bs-target="#carouselBingkai" data-bs-slide="prev">
@@ -174,12 +182,6 @@ async function loadBingkai() {
       </button>
     </div>
   `;
-
-  // Markup ini disisipkan setelah halaman selesai dimuat, jadi autoplay harus dijalankan manual
-  const el = document.getElementById('carouselBingkai');
-  if (el && window.bootstrap) {
-    bootstrap.Carousel.getOrCreateInstance(el, { interval: 5000, ride: false }).cycle();
-  }
 }
 
 async function loadRenungan() {
@@ -191,11 +193,7 @@ async function loadRenungan() {
   const { data, error } = await sb
     .from('pengaturan')
     .select('key, value')
-    .in('key', [
-      'renungan_ayat',
-      'renungan_judul',
-      'renungan_isi'
-    ]);
+    .in('key', ['renungan_ayat', 'renungan_judul', 'renungan_isi']);
 
   if (error) {
     console.error('Renungan gagal dimuat:', error);
@@ -216,7 +214,7 @@ async function loadRenungan() {
     ${r.renungan_judul ? `<h2 class="renungan-judul">${esc(r.renungan_judul)}</h2>` : ''}
     <div class="renungan-isi">${esc(isi)}</div>`;
 }
-/* ============ LOGO NAVBAR ============ */
+
 async function loadLogoNavbar() {
   const target = document.querySelector('.navbar-logo');
   if (!target) return;
@@ -225,11 +223,11 @@ async function loadLogoNavbar() {
   if (data && data.value) {
     const url = sb.storage.from('dokumentasi').getPublicUrl(data.value).data.publicUrl;
     target.src = url;
-    target.style.display = 'block';
-  } 
+  } else {
+    target.src = 'assets/foto/logo-pekawan.png'; // Fallback
+  }
 }
 
-/* ============ FOTO HERO ============ */
 async function loadHero() {
   const target = document.querySelector('#hero-image');
   if (!target) return;
@@ -239,13 +237,15 @@ async function loadHero() {
     const url = sb.storage.from('dokumentasi').getPublicUrl(data.value).data.publicUrl;
     target.src = url;
     target.style.display = 'block'; 
+  } else {
+    target.src = 'assets/foto/pekawan.jpg'; // Fallback
   }
 }
 
 /* ============ INIT ============ */
 document.addEventListener('DOMContentLoaded', () => {
   loadLogoNavbar();
-  loadHero(); // Memuat foto hero
+  loadHero();
   loadJadwal();
   loadGallery();
   loadKegiatan();

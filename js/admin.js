@@ -27,7 +27,7 @@ async function initAdmin() {
     loadBingkai(),
     loadRenungan(),
     loadLogoNavbar(),
-    loadHero() // Memuat preview foto hero di admin
+    loadHero()
   ]);
 }
 
@@ -191,26 +191,29 @@ async function listKegiatan() {
   }).join('') || '<tr><td colspan="4">Belum ada kegiatan.</td></tr>';
 }
 
-/* ============ FOTO BINGKAI ============ */
+/* ============ FOTO BINGKAI (DENGAN JUDUL) ============ */
 async function loadBingkai() {
   const box = $('#bingkai-preview'); if (!box) return;
   const { data, error } = await sb.from('pengaturan').select('value').eq('key', 'foto_bingkai').maybeSingle();
   if (error) return;
   
-  let paths = [];
+  let items = [];
   try {
-    paths = JSON.parse(data?.value) || [];
-    if (!Array.isArray(paths)) paths = data.value ? [data.value] : [];
-  } catch(e) { if (data?.value) paths = [data.value]; }
+    items = JSON.parse(data?.value) || [];
+    if (!Array.isArray(items)) items = data.value ? [data.value] : [];
+  } catch(e) { if (data?.value) items = [data.value]; }
 
-  if (!paths.length) {
+  // Konversi data lama (string) ke format baru (objek)
+  items = items.map(item => typeof item === 'string' ? { path: item, judul: '' } : item);
+
+  if (!items.length) {
     box.innerHTML = `<div class="foto-jadwal-kosong"><i class="bi bi-image"></i></div>`;
     return;
   }
 
-  box.innerHTML = paths.map(path => {
-    const url = publicUrl(path);
-    return `<img src="${esc(url)}" alt="Foto bingkai" style="width:120px;height:80px;object-fit:cover;border-radius:8px;margin:4px;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,0.2)">`;
+  box.innerHTML = items.map(item => {
+    const url = publicUrl(item.path);
+    return `<img src="${esc(url)}" alt="Foto bingkai" title="${esc(item.judul)}" style="width:120px;height:80px;object-fit:cover;border-radius:8px;margin:4px;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,0.2)">`;
   }).join('');
 }
 
@@ -424,29 +427,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     const files = $('#bingkai-file').files;
     if (!files.length) { msg('Pilih minimal satu foto.'); return; }
 
+    const judul = $('#bingkai-judul') ? $('#bingkai-judul').value.trim() : '';
     msg('Sedang mengunggah...', true);
+
     const uploadPromises = Array.from(files).map(async (file) => {
       if (file.size > MAX_SIZE) throw new Error(`File ${file.name} melebihi 5 MB.`);
       const path = `bingkai/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
       const { error } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false });
       if (error) throw error;
-      return path;
+      return { path, judul }; // Menyimpan objek berisi path dan judul
     });
 
     try {
-      const newPaths = await Promise.all(uploadPromises);
+      const newItems = await Promise.all(uploadPromises);
       
       const oldPathStr = await getBingkaiPath();
-      let oldPaths = [];
+      let oldItems = [];
       try {
-        oldPaths = JSON.parse(oldPathStr) || [];
-        if (!Array.isArray(oldPaths)) oldPaths = oldPathStr ? [oldPathStr] : [];
-      } catch(err) { if (oldPathStr) oldPaths = [oldPathStr]; }
+        oldItems = JSON.parse(oldPathStr) || [];
+        if (!Array.isArray(oldItems)) oldItems = oldPathStr ? [oldPathStr] : [];
+      } catch(err) { if (oldPathStr) oldItems = [oldPathStr]; }
       
-      const allPaths = [...oldPaths, ...newPaths];
-      const { error: eDb } = await simpanBingkai(JSON.stringify(allPaths));
+      // Konversi data lama (jika ada yang string) ke format objek baru
+      oldItems = oldItems.map(item => typeof item === 'string' ? { path: item, judul: '' } : item);
+
+      const allItems = [...oldItems, ...newItems];
+      const { error: eDb } = await simpanBingkai(JSON.stringify(allItems));
+      
       if (eDb) {
-        await sb.storage.from(BUCKET).remove(newPaths); // jangan tinggalkan file yatim
+        await sb.storage.from(BUCKET).remove(newItems.map(i => i.path));
         throw eDb;
       }
       
@@ -461,16 +470,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#hapus-bingkai')?.addEventListener('click', async () => {
     if (!confirm('Hapus SEMUA foto bingkai?')) return;
     const oldPathStr = await getBingkaiPath();
-    let oldPaths = [];
+    let oldItems = [];
     try {
-      oldPaths = JSON.parse(oldPathStr) || [];
-      if (!Array.isArray(oldPaths)) oldPaths = oldPathStr ? [oldPathStr] : [];
-    } catch(err) { if (oldPathStr) oldPaths = [oldPathStr]; }
+      oldItems = JSON.parse(oldPathStr) || [];
+      if (!Array.isArray(oldItems)) oldItems = oldPathStr ? [oldPathStr] : [];
+    } catch(err) { if (oldPathStr) oldItems = [oldPathStr]; }
     
     const { error: eDb } = await simpanBingkai('[]');
     if (eDb) { msg('Gagal menghapus foto bingkai: ' + eDb.message); return; }
-    if (oldPaths.length) {
-      await sb.storage.from(BUCKET).remove(oldPaths);
+    
+    const pathsToRemove = oldItems.map(item => typeof item === 'string' ? item : item.path).filter(Boolean);
+    if (pathsToRemove.length) {
+      await sb.storage.from(BUCKET).remove(pathsToRemove);
     }
     msg('Semua foto bingkai dihapus.', true);
     await loadBingkai();

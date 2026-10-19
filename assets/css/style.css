@@ -1124,3 +1124,32 @@ body {
   margin: 0.5rem 0 0;
   font-weight: 600;
 }
+/* ===== JUDUL DI ATAS FOTO BINGKAI ===== */
+.bingkai-container {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.overlay-bingkai {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(67, 48, 124, 0.85); /* Warna ungu gelap transparan */
+  color: #fff;
+  text-align: center;
+  padding: 12px 15px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px); /* Efek blur kaca */
+  -webkit-backdrop-filter: blur(4px);
+  box-sizing: border-box;
+  z-index: 2;
+  transition: background 0.3s ease;
+}
+
+.bingkai-container:hover .overlay-bingkai {
+  background: rgba(67, 48, 124, 1); /* Lebih gelap saat di-hover */
+}
